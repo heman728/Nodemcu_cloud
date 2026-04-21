@@ -48,6 +48,22 @@
       padding:5px;
       border-bottom:1px solid #ddd;
     }
+	#leaderboardBox{
+  background:#000;
+  color:#00ff00;
+  border-radius:10px;
+  padding:12px;
+  margin-top:10px;
+  font-family: "Courier New", monospace;
+  font-size:14px;
+  overflow-x:auto;
+}
+
+#leaderboardText{
+  margin:0;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
   </style>
 </head>
 
@@ -80,10 +96,13 @@
     <button class="off" onclick="setLED('led2',0)">OFF</button>
   </div>
 
-  <div class="card">
-    <h3>🏆 Leaderboard (Most Toggles)</h3>
-    <div id="leaderboard"></div>
+<div class="card">
+  <h3>🏆 Leaderboard (Toggle Count)</h3>
+
+  <div id="leaderboardBox">
+    <pre id="leaderboardText">Loading...</pre>
   </div>
+</div>
 
 </div>
 
@@ -148,14 +167,18 @@ db.ref("lastBy/led2").on("value", function(s){
 });
 
 // Leaderboard
+// Terminal style leaderboard (Top 5)
 db.ref("count").on("value", function(s){
   var data = s.val() || {};
-  var html = "";
   var sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]);
-  sorted.forEach(function(d){
-    html += "<div>"+d[0]+" : "+d[1]+" toggles</div>";
+
+  var text = "";
+  sorted.slice(0,5).forEach(function(d,i){
+    text += (i+1) + ". " + d[0] + " : " + d[1] + " toggles\n";
   });
-  document.getElementById("leaderboard").innerHTML = html;
+
+  if(text==="") text = "No activity yet...";
+  document.getElementById("leaderboardText").textContent = text;
 });
 </script>
 
