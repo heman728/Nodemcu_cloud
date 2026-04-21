@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NodeMCU LED Control</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
+</head>
+
+<body style="text-align:center;font-family:Arial">
+
+<h2>Realtime LED Control</h2>
+
+<h3 id="led1status">LED1</h3>
+<button onclick="setLED('led1',1)">LED1 ON</button>
+<button onclick="setLED('led1',0)">LED1 OFF</button>
+
+<br><br>
+
+<h3 id="led2status">LED2</h3>
+<button onclick="setLED('led2',1)">LED2 ON</button>
+<button onclick="setLED('led2',0)">LED2 OFF</button>
+
+<script>
+var firebaseConfig = {
+  databaseURL: "https://your-id-default-rtdb.firebaseio.com/"
+};
+
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+function setLED(led, state){
+  db.ref(led).set(state);
+}
+
+// Realtime status for all users
+db.ref("led1").on("value", function(snapshot){
+  document.getElementById("led1status").innerHTML =
+    snapshot.val() ? "LED1 is ON" : "LED1 is OFF";
+});
+
+db.ref("led2").on("value", function(snapshot){
+  document.getElementById("led2status").innerHTML =
+    snapshot.val() ? "LED2 is ON" : "LED2 is OFF";
+});
+</script>
+
+</body>
+</html>
